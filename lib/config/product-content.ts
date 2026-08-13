@@ -51,6 +51,34 @@ const PRODUCT_CONTENT: Record<string, ProductContent> = {
     features: ["manual_reader"],
     allowDownload: false,
   },
+  "50-defeitos-tablets-ipads": {
+    description:
+      "Manual visual de diagnóstico e reparos para tablets Android e iPads.",
+    features: ["manual_reader"],
+    allowDownload: false,
+    coverImage: "/products/50-defeitos-tablets-ipads.png",
+  },
+  "40-defeitos-smartwatches": {
+    description:
+      "Manual visual com problemas de bateria, carregamento, tela, touch, sensores, conectividade e outros defeitos.",
+    features: ["manual_reader"],
+    allowDownload: false,
+    coverImage: "/products/40-defeitos-smartwatches.png",
+  },
+  "50-diagnosticos-placas": {
+    description:
+      "Material avançado focado em falhas de placa, alimentação, carregamento, consumo, curto e inicialização.",
+    features: ["manual_reader"],
+    allowDownload: false,
+    coverImage: "/products/50-diagnosticos-placas.png",
+  },
+  "gabaritos-parafusos-iphone": {
+    description:
+      "Gabarito visual pra organizar e identificar os parafusos na hora de desmontar e montar iPhones (6 ao 15), sem trocar peça de lugar.",
+    features: ["manual_reader"],
+    allowDownload: false,
+    coverImage: "/products/gabaritos-parafusos-iphone.png",
+  },
 };
 
 const DEFAULT_CONTENT: ProductContent = {

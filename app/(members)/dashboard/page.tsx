@@ -5,11 +5,12 @@ import { ProductCard } from "@/components/products/product-card";
 import { OrderBumpCard } from "@/components/products/order-bump-card";
 import { getCurrentCustomer } from "@/lib/auth/session";
 import { getCustomerProducts } from "@/lib/data/products";
-import { ORDER_BUMPS } from "@/lib/config/order-bumps";
+import { ORDER_BUMPS, isOrderBumpOwned } from "@/lib/config/order-bumps";
 
 export default async function DashboardPage() {
   const customer = await getCurrentCustomer();
   const products = customer ? await getCustomerProducts(customer.id) : [];
+  const ownedSlugs = new Set(products.map((product) => product.slug));
 
   return (
     <div className="space-y-8 p-4 md:p-8">
@@ -64,7 +65,11 @@ export default async function DashboardPage() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
           {ORDER_BUMPS.map((item) => (
-            <OrderBumpCard key={item.slug} item={item} />
+            <OrderBumpCard
+              key={item.slug}
+              item={item}
+              owned={isOrderBumpOwned(item, ownedSlugs)}
+            />
           ))}
         </div>
       </section>

@@ -1,9 +1,17 @@
 import Image from "next/image";
+import { Check, ExternalLink } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import type { OrderBump } from "@/lib/config/order-bumps";
 
-export function OrderBumpCard({ item }: { item: OrderBump }) {
+export function OrderBumpCard({
+  item,
+  owned,
+}: {
+  item: OrderBump;
+  owned: boolean;
+}) {
   return (
     <Card className="flex flex-col overflow-hidden gap-3 pt-0 sm:gap-4">
       <div className="relative aspect-square w-full overflow-hidden bg-muted">
@@ -25,11 +33,35 @@ export function OrderBumpCard({ item }: { item: OrderBump }) {
           {item.description}
         </p>
       </CardContent>
-      <CardFooter className="items-center justify-between px-3 sm:px-6">
-        <Badge variant="secondary">{item.priceLabel}</Badge>
-        <span className="text-xs text-muted-foreground">
-          Disponível no checkout
-        </span>
+      <CardFooter className="flex-col items-stretch gap-2 px-3 sm:px-6">
+        {owned ? (
+          <Badge
+            variant="secondary"
+            className="w-fit bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+          >
+            <Check /> Adquirido
+          </Badge>
+        ) : (
+          <>
+            <Badge variant="secondary" className="w-fit">
+              {item.priceLabel}
+            </Badge>
+            <Button
+              size="sm"
+              className="w-full"
+              render={
+                <a
+                  href={item.checkoutUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+              nativeButton={false}
+            >
+              Quero garantir <ExternalLink />
+            </Button>
+          </>
+        )}
       </CardFooter>
     </Card>
   );
