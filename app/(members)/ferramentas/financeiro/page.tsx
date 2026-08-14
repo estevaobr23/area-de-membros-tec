@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ToolPaywall, ToolAccessBadge } from "@/components/tools/tool-paywall";
+import { ToolHeader } from "@/components/tools/tool-header";
 import { requireCustomer } from "@/lib/auth/session";
 import { getToolAccess } from "@/lib/auth/tool-access";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -85,29 +86,22 @@ export default async function FinanceiroPage({
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Controle Financeiro
-            </h1>
-            <ToolAccessBadge access={access} />
-          </div>
-          <p className="text-muted-foreground">
-            Receitas e despesas da assistência de {formatDate(from)} a{" "}
-            {formatDate(to)}.
-          </p>
-        </div>
-        {access.canWrite && (
-          <Button
-            render={<Link href="/ferramentas/financeiro/novo" />}
-            nativeButton={false}
-          >
-            <Plus data-icon="inline-start" />
-            Nova movimentação
-          </Button>
-        )}
-      </div>
+      <ToolHeader
+        tool="financeiro"
+        subtitle={`Receitas e despesas da assistência de ${formatDate(from)} a ${formatDate(to)}.`}
+        badge={<ToolAccessBadge access={access} />}
+        actions={
+          access.canWrite && (
+            <Button
+              render={<Link href="/ferramentas/financeiro/novo" />}
+              nativeButton={false}
+            >
+              <Plus data-icon="inline-start" />
+              Nova movimentação
+            </Button>
+          )
+        }
+      />
 
       <ToolPaywall
         toolName="Controle Financeiro"

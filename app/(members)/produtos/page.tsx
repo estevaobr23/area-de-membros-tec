@@ -12,7 +12,7 @@ export default async function ProdutosPage() {
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <div>
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
         <h1 className="text-2xl font-semibold tracking-tight">
           Meus Produtos
         </h1>
@@ -34,7 +34,7 @@ export default async function ProdutosPage() {
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards duration-500 [animation-delay:150ms]">
         <div>
           <h2 className="text-lg font-medium">Complementos disponíveis</h2>
           <p className="text-sm text-muted-foreground">

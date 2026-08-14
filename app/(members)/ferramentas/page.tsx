@@ -1,63 +1,14 @@
 import Link from "next/link";
-import {
-  ClipboardList,
-  Calculator,
-  Wallet,
-  FileText,
-  ArrowRight,
-  type LucideIcon,
-} from "lucide-react";
+import { ArrowRight, Check, Wrench } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToolAccessBadge } from "@/components/tools/tool-paywall";
 import { getCurrentCustomer } from "@/lib/auth/session";
-import { getToolAccess, type ToolKey } from "@/lib/auth/tool-access";
+import { getToolAccess } from "@/lib/auth/tool-access";
 import { getCustomerProducts } from "@/lib/data/products";
-import { getProductContent, type ProductFeature } from "@/lib/config/product-content";
-
-interface ToolDefinition {
-  key: ToolKey;
-  feature: ProductFeature;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-}
-
-const TOOLS: ToolDefinition[] = [
-  {
-    key: "ordem-servico",
-    feature: "tools_os",
-    title: "Ordem de Serviço",
-    description:
-      "Cadastre clientes, aparelhos, defeitos, serviços e acompanhe o status de cada reparo.",
-    icon: ClipboardList,
-  },
-  {
-    key: "calculadora",
-    feature: "tools_calculator",
-    title: "Calculadora de Preço e Lucro",
-    description:
-      "Informe custo, mão de obra e margem para calcular o preço de venda ideal.",
-    icon: Calculator,
-  },
-  {
-    key: "financeiro",
-    feature: "tools_financeiro",
-    title: "Controle Financeiro",
-    description:
-      "Registre receitas e despesas e acompanhe o financeiro da assistência.",
-    icon: Wallet,
-  },
-  {
-    key: "orcamento-garantia",
-    feature: "tools_orcamento",
-    title: "Orçamento + Garantia",
-    description:
-      "Gere orçamentos profissionais e termos de garantia para seus clientes.",
-    icon: FileText,
-  },
-];
+import { getProductContent } from "@/lib/config/product-content";
+import { TOOL_IDENTITIES } from "@/lib/config/tool-identity";
+import { cn } from "@/lib/utils";
 
 export default async function FerramentasPage({
   searchParams,
@@ -71,17 +22,28 @@ export default async function FerramentasPage({
 
   const accessByTool = new Map(
     await Promise.all(
-      TOOLS.map(async (t) => [t.key, await getToolAccess(t.key)] as const)
+      TOOL_IDENTITIES.map(
+        async (t) => [t.key, await getToolAccess(t.key)] as const
+      )
     )
   );
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Ferramentas</h1>
-        <p className="text-muted-foreground">
-          Utilitários para o dia a dia da assistência técnica.
-        </p>
+      <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div className="flex items-center gap-3">
+          <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-slate-600 to-slate-800 text-white shadow-lg dark:from-slate-500 dark:to-slate-700">
+            <Wrench className="size-5" />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+              Ferramentas
+            </h1>
+            <p className="text-sm text-muted-foreground sm:text-base">
+              Utilitários para o dia a dia da assistência técnica.
+            </p>
+          </div>
+        </div>
       </div>
 
       {bloqueado && (
@@ -92,42 +54,92 @@ export default async function FerramentasPage({
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        {TOOLS.map((tool) => {
+        {TOOL_IDENTITIES.map((tool, index) => {
           const isIncluded = unlockedFeatures.has(tool.feature);
           const access = accessByTool.get(tool.key)!;
           const Icon = tool.icon;
           return (
-            <Card key={tool.key} className="flex flex-col">
-              <CardHeader className="flex flex-row items-start justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <Icon className="size-5 text-muted-foreground" />
-                  <CardTitle className="text-base">{tool.title}</CardTitle>
+            <div
+              key={tool.key}
+              className={cn(
+                "group relative flex flex-col overflow-hidden rounded-xl border bg-card text-card-foreground shadow-sm",
+                "transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
+                tool.hoverGlow,
+                "animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards duration-500"
+              )}
+              style={{ animationDelay: `${index * 90}ms` }}
+            >
+              {/* filete gradiente da marca da ferramenta */}
+              <div className={cn("h-1 w-full", tool.gradient)} />
+
+              <div className="flex flex-1 flex-col gap-4 p-4 sm:p-5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={cn(
+                        "flex size-11 shrink-0 items-center justify-center rounded-xl text-white shadow-md",
+                        "transition-transform duration-300 group-hover:scale-110",
+                        tool.gradient
+                      )}
+                    >
+                      <Icon className="size-5" />
+                    </div>
+                    <div>
+                      <h2 className="font-semibold leading-tight">
+                        {tool.title}
+                      </h2>
+                      <p className={cn("text-xs font-medium", tool.textAccent)}>
+                        {tool.tagline}
+                      </p>
+                    </div>
+                  </div>
+                  {isIncluded ? (
+                    <ToolAccessBadge access={access} />
+                  ) : (
+                    <Badge variant="outline">Não incluso</Badge>
+                  )}
                 </div>
-                {isIncluded ? (
-                  <ToolAccessBadge access={access} />
-                ) : (
-                  <Badge variant="outline">Não incluso</Badge>
-                )}
-              </CardHeader>
-              <CardContent className="flex flex-1 flex-col justify-between gap-3">
+
                 <p className="text-sm text-muted-foreground">
                   {tool.description}
                 </p>
+
+                <ul className="space-y-1.5">
+                  {tool.highlights.map((h) => (
+                    <li
+                      key={h}
+                      className="flex items-center gap-2 text-xs text-muted-foreground sm:text-sm"
+                    >
+                      <span
+                        className={cn(
+                          "flex size-4 shrink-0 items-center justify-center rounded-full",
+                          tool.softBg
+                        )}
+                      >
+                        <Check className={cn("size-3", tool.textAccent)} />
+                      </span>
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+
                 {isIncluded && (
-                  <div>
+                  <div className="mt-auto pt-1">
                     <Button
-                      variant="outline"
-                      size="sm"
+                      className="w-full"
                       render={<Link href={`/ferramentas/${tool.key}`} />}
                       nativeButton={false}
                     >
-                      Abrir
-                      <ArrowRight data-icon="inline-end" />
+                      Abrir ferramenta
+                      <ArrowRight
+                        data-icon="inline-end"
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      />
                     </Button>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           );
         })}
       </div>

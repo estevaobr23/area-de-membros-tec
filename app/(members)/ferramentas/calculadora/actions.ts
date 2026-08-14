@@ -73,6 +73,45 @@ export async function deletePricingCalculationAction(formData: FormData) {
   redirect("/ferramentas/calculadora");
 }
 
+export async function savePartAction(formData: FormData) {
+  const customer = await requireCustomer();
+  await assertToolWrite("calculadora");
+
+  const name = String(formData.get("name") ?? "").trim().slice(0, 80);
+  const cost = num(formData.get("cost"));
+  if (!name) redirect("/ferramentas/calculadora?erro=peca");
+
+  const supabase = createServiceClient();
+  // Mesmo nome = atualiza o custo (upsert pela unique customer_id+name).
+  await supabase.from("saved_parts").upsert(
+    {
+      customer_id: customer.id,
+      name,
+      cost,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "customer_id,name" }
+  );
+
+  redirect("/ferramentas/calculadora?peca=1");
+}
+
+export async function deletePartAction(formData: FormData) {
+  const customer = await requireCustomer();
+  await assertToolWrite("calculadora");
+
+  const id = String(formData.get("id") ?? "");
+  if (id) {
+    const supabase = createServiceClient();
+    await supabase
+      .from("saved_parts")
+      .delete()
+      .eq("id", id)
+      .eq("customer_id", customer.id);
+  }
+  redirect("/ferramentas/calculadora");
+}
+
 export async function duplicatePricingCalculationAction(formData: FormData) {
   const customer = await requireCustomer();
   await assertToolWrite("calculadora");

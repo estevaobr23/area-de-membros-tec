@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { LogOut, Smartphone } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -19,8 +19,11 @@ export function Topbar({ email }: { email: string }) {
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
-      <span className="font-semibold tracking-tight md:hidden">
-        Área de Membros
+      <span className="flex items-center gap-2 md:hidden">
+        <span className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 text-white shadow-sm">
+          <Smartphone className="size-4" />
+        </span>
+        <span className="font-semibold tracking-tight">Área de Membros</span>
       </span>
       <div className="hidden md:block" />
 

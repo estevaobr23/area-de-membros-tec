@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ToolPaywall, ToolAccessBadge } from "@/components/tools/tool-paywall";
+import { ToolHeader } from "@/components/tools/tool-header";
 import { requireCustomer } from "@/lib/auth/session";
 import { getToolAccess } from "@/lib/auth/tool-access";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -104,38 +105,32 @@ export default async function OrdemServicoPage({
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Ordem de Serviço
-            </h1>
-            <ToolAccessBadge access={access} />
-          </div>
-          <p className="text-muted-foreground">
-            Gestão dos reparos da sua assistência.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            render={<Link href="/ferramentas/ordem-servico/clientes" />}
-            nativeButton={false}
-          >
-            <Users data-icon="inline-start" />
-            Clientes
-          </Button>
-          {access.canWrite && (
+      <ToolHeader
+        tool="ordem-servico"
+        subtitle="Gestão dos reparos da sua assistência."
+        badge={<ToolAccessBadge access={access} />}
+        actions={
+          <>
             <Button
-              render={<Link href="/ferramentas/ordem-servico/novo" />}
+              variant="outline"
+              render={<Link href="/ferramentas/ordem-servico/clientes" />}
               nativeButton={false}
             >
-              <Plus data-icon="inline-start" />
-              Nova OS
+              <Users data-icon="inline-start" />
+              Clientes
             </Button>
-          )}
-        </div>
-      </div>
+            {access.canWrite && (
+              <Button
+                render={<Link href="/ferramentas/ordem-servico/novo" />}
+                nativeButton={false}
+              >
+                <Plus data-icon="inline-start" />
+                Nova OS
+              </Button>
+            )}
+          </>
+        }
+      />
 
       <ToolPaywall
         toolName="Ordem de Serviço"

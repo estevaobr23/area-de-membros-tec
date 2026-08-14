@@ -75,13 +75,14 @@
   --chart-4: oklch(0.715 0.13 235);
   --chart-5: oklch(0.42 0.15 262);
   --radius: 0.625rem;
-  --sidebar: oklch(0.975 0.01 252);
-  --sidebar-foreground: oklch(0.24 0.045 258);
-  --sidebar-primary: oklch(0.546 0.215 262.88);
+  /* Sidebar premium: azul-marinho profundo mesmo no tema claro. */
+  --sidebar: oklch(0.21 0.04 260);
+  --sidebar-foreground: oklch(0.93 0.012 250);
+  --sidebar-primary: oklch(0.62 0.19 260);
   --sidebar-primary-foreground: oklch(0.985 0.005 250);
-  --sidebar-accent: oklch(0.94 0.03 252);
-  --sidebar-accent-foreground: oklch(0.4 0.13 260);
-  --sidebar-border: oklch(0.912 0.018 252);
+  --sidebar-accent: oklch(0.29 0.05 260);
+  --sidebar-accent-foreground: oklch(0.97 0.008 250);
+  --sidebar-border: oklch(0.93 0.03 255 / 12%);
   --sidebar-ring: oklch(0.62 0.16 260);
 }
 
@@ -130,7 +131,17 @@
     @apply font-sans;
   }
 }
-/* Impressão de documentos (orçamento / termo de garantia):
+/* Respeita usuários com "reduzir movimento" ativado no sistema. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Impressão de documentos (OS / orçamento / termo de garantia):
    só a área .print-doc aparece no papel. */
 @media print {
   body * {

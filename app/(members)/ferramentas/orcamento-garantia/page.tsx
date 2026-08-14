@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ToolPaywall, ToolAccessBadge } from "@/components/tools/tool-paywall";
+import { ToolHeader } from "@/components/tools/tool-header";
 import { requireCustomer } from "@/lib/auth/session";
 import { getToolAccess } from "@/lib/auth/tool-access";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -73,28 +74,23 @@ export default async function OrcamentoGarantiaPage({
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Orçamento + Garantia
-            </h1>
-            <ToolAccessBadge access={access} />
-          </div>
-          <p className="text-muted-foreground">
-            Documentos profissionais para entregar ao seu cliente.
-          </p>
-        </div>
-        {access.canWrite && tab === "orcamentos" && (
-          <Button
-            render={<Link href="/ferramentas/orcamento-garantia/novo" />}
-            nativeButton={false}
-          >
-            <Plus data-icon="inline-start" />
-            Novo orçamento
-          </Button>
-        )}
-      </div>
+      <ToolHeader
+        tool="orcamento-garantia"
+        subtitle="Documentos profissionais para entregar ao seu cliente."
+        badge={<ToolAccessBadge access={access} />}
+        actions={
+          access.canWrite &&
+          tab === "orcamentos" && (
+            <Button
+              render={<Link href="/ferramentas/orcamento-garantia/novo" />}
+              nativeButton={false}
+            >
+              <Plus data-icon="inline-start" />
+              Novo orçamento
+            </Button>
+          )
+        }
+      />
 
       <ToolPaywall
         toolName="Orçamento + Garantia"

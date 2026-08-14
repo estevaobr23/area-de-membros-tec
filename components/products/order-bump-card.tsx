@@ -13,14 +13,14 @@ export function OrderBumpCard({
   owned: boolean;
 }) {
   return (
-    <Card className="flex flex-col overflow-hidden gap-3 pt-0 sm:gap-4">
+    <Card className="group flex flex-col overflow-hidden gap-3 pt-0 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:gap-4">
       <div className="relative aspect-square w-full overflow-hidden bg-muted">
         <Image
           src={item.coverImage}
           alt={item.name}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-          className="object-cover"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
       <CardHeader className="px-3 sm:px-6">

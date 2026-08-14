@@ -2,6 +2,7 @@ import { Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ToolAccessBadge } from "@/components/tools/tool-paywall";
+import { ToolHeader } from "@/components/tools/tool-header";
 import { PriceCalculator } from "@/components/tools/calculator/price-calculator";
 import { requireCustomer } from "@/lib/auth/session";
 import { getToolAccess } from "@/lib/auth/tool-access";
@@ -12,6 +13,8 @@ import {
   savePricingCalculationAction,
   deletePricingCalculationAction,
   duplicatePricingCalculationAction,
+  savePartAction,
+  deletePartAction,
 } from "./actions";
 
 export default async function CalculadoraPage({
@@ -19,37 +22,53 @@ export default async function CalculadoraPage({
 }: PageProps<"/ferramentas/calculadora">) {
   const customer = await requireCustomer();
   const access = await getToolAccess("calculadora");
-  const { salvo } = await searchParams;
+  const { salvo, peca } = await searchParams;
 
   const supabase = createServiceClient();
-  const { data: history } = await supabase
-    .from("pricing_calculations")
-    .select("id, label, results, created_at")
-    .eq("customer_id", customer.id)
-    .order("created_at", { ascending: false })
-    .limit(30);
+  const [{ data: history }, { data: savedParts }] = await Promise.all([
+    supabase
+      .from("pricing_calculations")
+      .select("id, label, results, created_at")
+      .eq("customer_id", customer.id)
+      .order("created_at", { ascending: false })
+      .limit(30),
+    supabase
+      .from("saved_parts")
+      .select("id, name, cost")
+      .eq("customer_id", customer.id)
+      .order("name")
+      .limit(200),
+  ]);
 
   return (
     <div className="space-y-6 p-4 md:p-8">
-      <div>
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Calculadora de Preço e Lucro
-          </h1>
-          <ToolAccessBadge access={access} />
-        </div>
-        <p className="text-muted-foreground">
-          Descubra quanto cobrar para ter o lucro que você quer.
-        </p>
-      </div>
+      <ToolHeader
+        tool="calculadora"
+        subtitle="Descubra quanto cobrar para ter o lucro que você quer."
+        badge={<ToolAccessBadge access={access} />}
+      />
 
       {salvo === "1" && (
         <p className="rounded-lg border border-green-500/40 bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
           Cálculo salvo no histórico.
         </p>
       )}
+      {peca === "1" && (
+        <p className="rounded-lg border border-green-500/40 bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
+          Peça salva no seu banco de peças.
+        </p>
+      )}
 
-      <PriceCalculator saveAction={savePricingCalculationAction} />
+      <PriceCalculator
+        savedParts={(savedParts ?? []).map((p) => ({
+          id: p.id,
+          name: p.name,
+          cost: Number(p.cost),
+        }))}
+        saveAction={savePricingCalculationAction}
+        savePartAction={savePartAction}
+        deletePartAction={deletePartAction}
+      />
 
       <Card>
         <CardHeader>

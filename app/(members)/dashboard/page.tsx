@@ -4,26 +4,38 @@ import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/products/product-card";
 import { OrderBumpCard } from "@/components/products/order-bump-card";
 import { getCurrentCustomer } from "@/lib/auth/session";
-import { getCustomerProducts } from "@/lib/data/products";
+import { getCustomerProducts, getLatestReading } from "@/lib/data/products";
 import { ORDER_BUMPS, isOrderBumpOwned } from "@/lib/config/order-bumps";
+import { getProductContent } from "@/lib/config/product-content";
+import { HeroBanner } from "@/components/dashboard/hero-banner";
 
 export default async function DashboardPage() {
   const customer = await getCurrentCustomer();
-  const products = customer ? await getCustomerProducts(customer.id) : [];
+  const [products, latestReading] = customer
+    ? await Promise.all([
+        getCustomerProducts(customer.id),
+        getLatestReading(customer.id),
+      ])
+    : [[], null];
   const ownedSlugs = new Set(products.map((product) => product.slug));
+
+  // Só oferece "continuar lendo" se o cliente ainda tem acesso ao produto.
+  const reading =
+    latestReading && ownedSlugs.has(latestReading.slug) ? latestReading : null;
+  const firstReadable = products.find((p) => {
+    const c = getProductContent(p.slug);
+    return Boolean(c.manualBlobPath || c.manualStoragePath || c.manualLocalPath);
+  });
 
   return (
     <div className="space-y-8 p-4 md:p-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Olá{customer?.name ? `, ${customer.name}` : ""}!
-        </h1>
-        <p className="text-muted-foreground">
-          Aqui está um resumo dos seus produtos e ferramentas.
-        </p>
-      </div>
+      <HeroBanner
+        name={customer?.name ?? null}
+        reading={reading}
+        startSlug={firstReadable?.slug ?? null}
+      />
 
-      <section className="space-y-4">
+      <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards duration-500 [animation-delay:100ms]">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">Seus produtos</h2>
           {products.length > 0 && (
@@ -56,7 +68,7 @@ export default async function DashboardPage() {
         )}
       </section>
 
-      <section className="space-y-4">
+      <section className="space-y-4 animate-in fade-in slide-in-from-bottom-4 fill-mode-backwards duration-500 [animation-delay:200ms]">
         <div>
           <h2 className="text-lg font-medium">Complementos disponíveis</h2>
           <p className="text-sm text-muted-foreground">

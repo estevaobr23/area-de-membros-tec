@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, FileText, Pencil, Receipt, ShieldCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  FileText,
+  Pencil,
+  Printer,
+  Receipt,
+  ShieldCheck,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -104,16 +111,25 @@ export default async function OsDetailPage({
             {os.delivered_at && ` · entregue em ${formatDateTime(os.delivered_at)}`}
           </p>
         </div>
-        {access.canWrite && (
+        <div className="flex flex-wrap gap-2">
           <Button
-            variant="outline"
-            render={<Link href={`/ferramentas/ordem-servico/${os.id}/editar`} />}
+            render={<Link href={`/ferramentas/ordem-servico/${os.id}/imprimir`} />}
             nativeButton={false}
           >
-            <Pencil data-icon="inline-start" />
-            Editar
+            <Printer data-icon="inline-start" />
+            Baixar PDF
           </Button>
-        )}
+          {access.canWrite && (
+            <Button
+              variant="outline"
+              render={<Link href={`/ferramentas/ordem-servico/${os.id}/editar`} />}
+              nativeButton={false}
+            >
+              <Pencil data-icon="inline-start" />
+              Editar
+            </Button>
+          )}
+        </div>
       </div>
 
       {revenueMsg && (
